@@ -1,9 +1,9 @@
 <script setup lang="ts">
-//
+import CustomNavBar from './component/CustomNavBar.vue'
 </script>
 
 <template>
-  <view class="index">index</view>
+  <CustomNavBar />
 </template>
 
 <style lang="scss">
