@@ -5,11 +5,11 @@ const memberStore = useMemberStore()
 
 const getData = async () => {
   const request = await http<string[]>({
-    url: '/home/banner',
+    url: '/member/profile',
     method: 'GET',
     header: {},
   })
-  console.log('请求成功', request)
+  // console.log('请求成功', request)
 }
 </script>
 
@@ -20,7 +20,7 @@ const getData = async () => {
       @tap="
         memberStore.setProfile({
           nickname: '黑马先锋',
-          token: '123456789',
+          token: '12345',
         })
       "
       size="mini"

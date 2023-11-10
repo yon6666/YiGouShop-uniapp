@@ -1,13 +1,15 @@
 <script setup lang="ts">
 //ex
+const { safeAreaInsets } = uni.getSystemInfoSync()
+// console.log(safeAreaInsets)
 </script>
 
 <template>
-  <view class="navbar">
+  <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px'}">
     <!-- logo文字 -->
     <view class="logo">
       <image class="logo-image" src="@/static/images/logo.png"></image>
-      <text class="logo-text">新鲜 · 亲民 · 快捷1111</text>
+      <text class="logo-text">新鲜 · 亲民 · 快捷</text>
     </view>
     <!-- 搜索条 -->
     <view class="search">
