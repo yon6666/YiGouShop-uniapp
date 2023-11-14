@@ -7,6 +7,8 @@ import { ref } from 'vue'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 const bannerList = ref<BannerItem[]>([])
 import categoryPanel from './component/categoryPanel.vue'
+import type { XtxGuessInstance } from '@/types/components'
+import PageSkeleton from './component/PageSkeleton.vue'
 const getHomeBannerData = async () => {
   const res = await getHomeBannerAPI()
   // console.log(res)
@@ -24,25 +26,57 @@ const getHomeHotData = async () => {
   const res = await getHomeHotAPI()
   HotList.value = res.result
 }
-onLoad(() => {
-  getHomeBannerData(), getHomeCategoryData(), getHomeHotData()
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+
+  isLoading.value = false
 })
+
+const guessRef = ref<XtxGuessInstance>()
 
 const onScrolltolower = () => {
   console.log('触底了')
+  guessRef.value?.getMore()
 }
+const isTrigerred = ref(false)
+const onRefresherrefresh = async () => {
+  isTrigerred.value = true
+  // await getHomeBannerData()
+  // await getHomeCategoryData()
+  // await getHomeHotData()
+  guessRef.value?.resetData()
+  await Promise.all([
+    getHomeBannerData(),
+    getHomeCategoryData(),
+    getHomeHotData(),
+    guessRef.value?.getMore(),
+  ])
+  isTrigerred.value = false
+}
+const isLoading = ref(false)
 </script>
 
 <template>
   <CustomNavBar />
-  <scroll-view @scrolltolower="onScrolltolower" class="home" scroll-y>
-    <!-- 轮播图 -->
-    <XtxSwiper :list="bannerList" />
-    <!-- 分类 -->
-    <categoryPanel :list="categoryList" />
-    <!-- 推荐专区 -->
-    <HotPanel :list="HotList" />
-    <XtxGuess />
+  <scroll-view
+    refresher-enabled
+    @scrolltolower="onScrolltolower"
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTrigerred"
+    class="scroll-view"
+    scroll-y
+  >
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <!-- 轮播图 -->
+      <XtxSwiper :list="bannerList" />
+      <!-- 分类 -->
+      <categoryPanel :list="categoryList" />
+      <!-- 推荐专区 -->
+      <HotPanel :list="HotList" />
+      <XtxGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 

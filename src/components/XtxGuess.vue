@@ -1,19 +1,51 @@
 <script setup lang="ts">
 //
 import { getHomeGoodsGuessLikeAPI } from '@/services/home'
+import type { PageParams } from '@/types/global'
 import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
 
 const GuessList = ref<GuessItem[]>([])
+const finish = ref(false)
 const getHomeGoodsGuessLikeData = async () => {
-  const res = await getHomeGoodsGuessLikeAPI()
+  if (finish.value) {
+    return uni.showToast({
+      title: '没有更多了',
+      icon: 'none',
+    })
+  }
+  const res = await getHomeGoodsGuessLikeAPI(pageParams)
   // console.log(res)
-  GuessList.value = res.result.items
+  // GuessList.value = res.result.items
+  //数字追加
+  GuessList.value.push(...res.result.items)
+  //页码累加
+  if (pageParams.page < res.result.pages) {
+    pageParams.page++
+  } else {
+    finish.value = true
+  }
+}
+
+const resetData = () => {
+  pageParams.page = 1
+  GuessList.value = []
+  finish.value = false
 }
 
 onMounted(() => {
   getHomeGoodsGuessLikeData()
 })
+
+defineExpose({
+  resetData,
+  getMore: getHomeGoodsGuessLikeData,
+})
+
+const pageParams: Required<PageParams> = {
+  page: 1,
+  pageSize: 10,
+}
 </script>
 
 <template>
@@ -36,7 +68,7 @@ onMounted(() => {
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text">{{ finish ? '没有更多了' : '正在加载...' }} </view>
 </template>
 
 <style lang="scss">

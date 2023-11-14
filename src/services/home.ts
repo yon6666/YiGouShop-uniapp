@@ -3,7 +3,7 @@ import type { BannerItem } from '@/types/home'
 import type { CategoryItem } from '@/types/home'
 import type { HotItem } from '@/types/home'
 import type { GuessItem } from '@/types/home'
-import type { PageResult } from '@/types/global'
+import type { PageParams, PageResult } from '@/types/global'
 export const getHomeBannerAPI = (distributionSite = 1) => {
   return http<BannerItem[]>({
     method: 'GET',
@@ -27,9 +27,10 @@ export const getHomeHotAPI = () => {
   })
 }
 
-export const getHomeGoodsGuessLikeAPI = () => {
+export const getHomeGoodsGuessLikeAPI = (data?: PageParams) => {
   return http<PageResult<GuessItem>>({
     method: 'GET',
     url: '/home/goods/guessLike',
+    data,
   })
 }
