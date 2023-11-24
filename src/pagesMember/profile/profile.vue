@@ -13,6 +13,17 @@ const getMemberProfileData = async () => {
 onLoad(() => {
   getMemberProfileData()
 })
+//修改头像
+const onAvatarChange = () => {
+  //调用拍照API
+  uni.chooseImage({
+    count: 1,
+    mediaType: ['image'],
+    success: (res) => {
+      console.log(res)
+    },
+  })
+}
 </script>
 
 <template>
@@ -24,7 +35,7 @@ onLoad(() => {
     </view>
     <!-- 头像 -->
     <view class="avatar">
-      <view class="avatar-content">
+      <view @tap="onAvatarChange" class="avatar-content">
         <image class="image" :src="profile?.avatar" mode="aspectFill" />
         <text class="text">点击修改头像</text>
       </view>
