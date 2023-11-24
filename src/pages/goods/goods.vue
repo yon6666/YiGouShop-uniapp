@@ -28,6 +28,12 @@ const popup = ref<{
   close: () => void
 }>()
 
+//弹出层条件渲染
+const popupName = ref<'address' | 'service'>()
+const openPopup = (name: typeof popupName.value) => {
+  popupName.value = name
+  popup.value?.open()
+}
 const onTapImage = (url: string) => {
   uni.previewImage({
     current: url,
@@ -73,11 +79,11 @@ onLoad(() => {
           <text class="label">选择</text>
           <text class="text ellipsis"> 请选择商品规格 </text>
         </view>
-        <view class="item arrow">
+        <view @tap="openPopup('address')" class="item arrow">
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
-        <view @tap="popup?.open('bottom')" class="item arrow">
+        <view @tap="openPopup('service')" class="item arrow">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮 </text>
         </view>
@@ -154,9 +160,8 @@ onLoad(() => {
   </view>
 
   <uni-popup ref="popup" type="bottom" background-color="#fff">
-    <AddressPanel />
-    <ServicePanel />
-    <button @tap="popup.close()">关闭</button>
+    <AddressPanel v-if="popupName === 'address'" @close="popup?.close()" />
+    <ServicePanel v-if="popupName === 'service'" @close="popup?.close()" />
   </uni-popup>
 </template>
 

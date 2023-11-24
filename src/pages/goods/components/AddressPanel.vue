@@ -1,11 +1,14 @@
 <script setup lang="ts">
 //
+const emit = defineEmits<{
+  (event: 'close'): void
+}>()
 </script>
 
 <template>
   <view class="address-panel">
     <!-- 关闭按钮 -->
-    <text class="close icon-close"></text>
+    <text class="close icon-close" @tap="emit('close')"></text>
     <!-- 标题 -->
     <view class="title">配送至</view>
     <!-- 内容 -->

@@ -9,6 +9,7 @@ const bannerList = ref<BannerItem[]>([])
 import categoryPanel from './component/categoryPanel.vue'
 import type { XtxGuessInstance } from '@/types/components'
 import PageSkeleton from './component/PageSkeleton.vue'
+import { useGuessList } from '@/composables/index'
 const getHomeBannerData = async () => {
   const res = await getHomeBannerAPI()
   // console.log(res)
@@ -33,12 +34,8 @@ onLoad(async () => {
   isLoading.value = false
 })
 
-const guessRef = ref<XtxGuessInstance>()
+const { guessRef, onScrolltolower } = useGuessList()
 
-const onScrolltolower = () => {
-  console.log('触底了')
-  guessRef.value?.getMore()
-}
 const isTrigerred = ref(false)
 const onRefresherrefresh = async () => {
   isTrigerred.value = true
