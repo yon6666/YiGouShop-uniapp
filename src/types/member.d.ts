@@ -29,3 +29,16 @@ export type ProfileDetail = BaseProfile & {
 }
 /** 性别 */
 export type Gender = '女' | '男'
+
+//修改请求体参数
+export type ProfileParams = pick<
+  ProfileDetail,
+  'nickname' | 'gender' | 'birthday' | 'profession'
+> & {
+  /** 省市区 */
+  provinceCode?: string
+  /** 省市区 */
+  cityCode?: string
+  /** 省市区 */
+  countyCode?: string
+}

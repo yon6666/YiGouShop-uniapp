@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { useMemberStore } from '@/stores'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import { getMemberProfileAPI } from '../../services/profile'
-import type { ProfileDetail } from '../../types/member'
+import { getMemberProfileAPI, putMemberProfileAPI } from '../../services/profile'
+import type { ProfileDetail, Gender } from '../../types/member'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
-const profile = ref<ProfileDetail>()
+const memberStore = useMemberStore()
+const profile = ref<ProfileDetail>({} as ProfileDetail)
 const getMemberProfileData = async () => {
   const res = await getMemberProfileAPI()
   profile.value = res.result
@@ -16,13 +18,67 @@ onLoad(() => {
 //修改头像
 const onAvatarChange = () => {
   //调用拍照API
-  uni.chooseImage({
+  uni.chooseMedia({
     count: 1,
     mediaType: ['image'],
     success: (res) => {
-      console.log(res)
+      const { tempFilePath } = res.tempFiles[0]
+      uni.uploadFile({
+        url: '/member/profile/avatar',
+        name: 'file',
+        filePath: tempFilePath,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            const avatar = JSON.parse(res.data).result.avatar
+            console.log(avatar)
+            profile.value!.avatar = avatar
+            memberStore.profile.avatar = avatar
+            uni.showToast({
+              icon: 'success',
+              title: '更新成功',
+            })
+          } else {
+            uni.showToast({
+              icon: 'error',
+              title: '出现错误',
+            })
+          }
+        },
+      })
     },
   })
+}
+
+const ongenderChange: UniHelper.RadioGroupOnChange = (ev) => {
+  profile.value.gender = ev.detail.value as Gender
+}
+const onsubmit = async () => {
+  const { nickname, gender, birthday } = profile.value
+  const res = await putMemberProfileAPI({
+    nickname,
+    gender,
+    birthday,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
+  })
+  memberStore.profile!.nickname = res.result.nickname
+  uni.showToast({
+    icon: 'success',
+    title: '更新成功',
+  })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 500)
+}
+const onBirthdayChange: UniHelper.DatePickerOnChange = (ev) => {
+  profile.value.birthday = ev.detail.value
+}
+
+let fullLocationCode: [string, string, string] = ['', '', '']
+const onCityChange: UniHelper.RegionPickerOnChange = (ev) => {
+  profile.value.fullLocation = ev.detail.value.join(' ')
+  fullLocationCode = ev.detail.code!
 }
 </script>
 
@@ -50,11 +106,11 @@ const onAvatarChange = () => {
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
-          <input class="input" type="text" placeholder="请填写昵称" :value="profile.nickname" />
+          <input class="input" type="text" placeholder="请填写昵称" v-model="profile.nickname" />
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="ongenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
               男
@@ -73,6 +129,7 @@ const onAvatarChange = () => {
             start="1900-01-01"
             :end="new Date()"
             :value="profile?.birthday"
+            @change="onBirthdayChange"
           >
             <view v-if="profile?.birthday">{{ profile?.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
@@ -80,7 +137,7 @@ const onAvatarChange = () => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker @change="onCityChange" class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
             <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
@@ -91,7 +148,7 @@ const onAvatarChange = () => {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button class="form-button" @tap="onsubmit">保 存</button>
     </view>
   </view>
 </template>

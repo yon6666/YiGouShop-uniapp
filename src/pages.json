@@ -100,11 +100,23 @@
 			"root": "pagesMember",
 			"pages": [
 				{
+					"path": "address-form/index",
+					"style": {
+						"navigationBarTitleText": "address-form"
+					}
+				},
+				{
+					"path": "address/index",
+					"style": {
+						"navigationBarTitleText": "地址管理"
+					}
+				},
+				{
 					"path": "profile/profile",
 					"style": {
 						"navigationBarTitleText": "个人信息",
-            "navigationStyle": "custom",
-            "navigationBarTextStyle": "white"
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "white"
 					}
 				},
 				{
