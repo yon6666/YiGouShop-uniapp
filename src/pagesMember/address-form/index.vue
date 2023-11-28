@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { postMemberAddressApI } from '@/services/address'
+import { postMemberAddressApI, getMemberAddressByIdApI } from '@/services/address'
+import { putMemberAddressByIdApI } from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 // 表单数据
 const form = ref({
   receiver: '', // 收货人
@@ -15,10 +17,20 @@ const form = ref({
 const query = defineProps<{
   id?: string
 }>()
+//获取收货地址详情
+const getMemberAddressByIdData = async () => {
+  if (query.id) {
+    const res = await getMemberAddressByIdApI(query.id)
+    Object.assign(form.value, res.result)
+  }
+}
 uni.setNavigationBarTitle({
   title: query.id ? '修改地址' : '新建地址',
 })
-
+//初始化加载
+onLoad(() => {
+  getMemberAddressByIdData()
+})
 //手机所在地域
 const reginPickerChange: UniHelper.RegionPickerOnChange = (ev) => {
   form.value.fullLocation = ev.detail.value.join(' ')
@@ -35,9 +47,13 @@ const onSwitchChange: UniHelper.SwitchOnChange = (ev) => {
 }
 //提交表单
 const onsubmit = async () => {
-  await postMemberAddressApI(form.value)
+  if (query.id) {
+    await putMemberAddressByIdApI(query.id, form.value)
+  } else {
+    await postMemberAddressApI(form.value)
+  }
   uni.showToast({
-    title: '提交成功',
+    title: query.id ? '修改成功' : '提交成功',
     icon: 'success',
   })
   setTimeout(() => {

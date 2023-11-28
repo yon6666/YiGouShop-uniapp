@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getMemberAddressApI } from '@/services/address'
-import { onLoad, onShow } from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { AddressItem } from '@/types/address'
 //获取收货地址列表
@@ -26,7 +26,7 @@ onShow(() => {
               <view class="user">
                 {{ item.receiver }}
                 <text class="contact">{{ item.contact }}</text>
-                <text v-if="true" class="badge">默认</text>
+                <text v-if="item.isDefault" class="badge">默认</text>
               </view>
               <view class="locate">{{ item.fullLocation }} {{ item.address }}</view>
               <navigator
