@@ -33,3 +33,11 @@ export const putMemberAddressByIdApI = (id: string, data: AddressParams) => {
     data,
   })
 }
+
+//删除收货地址
+export const deleteMemberAddressApI = (id: string) => {
+  return http({
+    method: 'DELETE',
+    url: `/member/address/${id}`,
+  })
+}
