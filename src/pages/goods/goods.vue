@@ -1,8 +1,15 @@
 <script setup lang="ts">
+/*eslint-disable*/
 import { getGoodsByIdAPI } from '@/services/goods'
+import { postMemberCartAPI } from '@/services/cart'
 import { onLoad } from '@dcloudio/uni-app'
 import type { GoodsResult } from '@/types/goods'
-import { ref } from 'vue'
+import type {
+  SkuPopupEvent,
+  SkuPopupInstanceType,
+  SkuPopupLocaldata,
+} from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import { computed, ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 // 获取屏幕边界到安全区域距离
@@ -11,11 +18,34 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 const query = defineProps<{
   id: string
 }>()
-
+//获取商品详细信息
 const goods = ref<GoodsResult>()
+const localdata = ref({} as SkuPopupLocaldata)
 const getGoodsByIdData = async () => {
   const res = await getGoodsByIdAPI(query.id)
   goods.value = res.result
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    spec_list: res.result.specs.map((item) => {
+      return {
+        name: item.name,
+        list: item.values,
+      }
+    }),
+    sku_list: res.result.skus.map((item) => {
+      return {
+        _id: item.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: item.picture,
+        price: item.price * 100,
+        sku_name_arr: item.specs.map((spec) => spec.valueName),
+        stock: item.inventory,
+      }
+    }),
+  }
 }
 const currentIndex = ref(0)
 const onSwiperChange: UniHelper.SwiperOnChange = (ev) => {
@@ -43,9 +73,47 @@ const onTapImage = (url: string) => {
 onLoad(() => {
   getGoodsByIdData()
 })
+enum SkuPopupMode {
+  Both = 1,
+  Cart = 2,
+  Buy = 3,
+}
+const isShowSku = ref(false)
+const mode = ref<SkuPopupMode>(SkuPopupMode.Both)
+const onOpenSkuPopup = (val: SkuPopupMode) => {
+  isShowSku.value = true
+  mode.value = val
+}
+const skuPopupRef = ref<SkuPopupInstanceType>()
+const selectArrText = computed(() => {
+  return skuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
+})
+//加入购物车
+const onAddCart = async (ev: SkuPopupEvent) => {
+  await postMemberCartAPI({ skuId: ev._id, count: ev.buy_num })
+  uni.showToast({
+    title: '加入购物车成功',
+    icon: 'success',
+  })
+  isShowSku.value = false
+}
 </script>
 
 <template>
+  <vk-data-goods-sku-popup
+    v-model="isShowSku"
+    :localdata="localdata"
+    :mode="mode"
+    add-cart-background-color="#ffa868"
+    buy-now-background-color="#27BA9B"
+    ref="skuPopupRef"
+    :actived-style="{
+      color: '#27BA9B',
+      borderColor: '#27BA9B',
+      backgroundColor: '#E9F8F5',
+    }"
+    @add-cart="onAddCart"
+  />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
@@ -75,9 +143,9 @@ onLoad(() => {
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow">
+        <view class="item arrow" @tap="onOpenSkuPopup(SkuPopupMode.Both)">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格 </text>
+          <text class="text ellipsis"> {{ selectArrText }} </text>
         </view>
         <view @tap="openPopup('address')" class="item arrow">
           <text class="label">送至</text>
@@ -128,10 +196,7 @@ onLoad(() => {
           hover-class="none"
           :url="`/pages/goods/goods?id={item.id}`"
         >
-          <image
-          class="image"
-          mode="aspectFill"
-          :src="item.picture"></image>
+          <image class="image" mode="aspectFill" :src="item.picture"></image>
           <view class="name ellipsis">{{ item.name }}</view>
           <view class="price">
             <text class="symbol">¥</text>
@@ -154,8 +219,8 @@ onLoad(() => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="addcart" @tap="onOpenSkuPopup(SkuPopupMode.Cart)"> 加入购物车 </view>
+      <view class="buynow" @tap="onOpenSkuPopup(SkuPopupMode.Buy)"> 立即购买 </view>
     </view>
   </view>
 

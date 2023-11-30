@@ -58,7 +58,7 @@ const pageParams: Required<PageParams> = {
       class="guess-item"
       v-for="item in GuessList"
       :key="item.id"
-      :url="`/pages/goods/goods`"
+      :url="`/pages/goods/goods?id=${item.id}`"
     >
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>

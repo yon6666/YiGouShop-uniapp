@@ -147,6 +147,7 @@
 </template>
 
 <script>
+/* eslint-disable*/
 var vk // vk依赖
 var goodsCache = {} // 本地商品缓存
 export default {
