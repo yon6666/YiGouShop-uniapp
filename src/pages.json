@@ -31,7 +31,7 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
-    {
+		{
 			"path": "pages/cart/cart2",
 			"style": {
 				"navigationBarTitleText": "购物车"
@@ -102,6 +102,17 @@
 		]
 	},
 	"subPackages": [
+		{
+			"root": "pagesOrder",
+			"pages": [
+				{
+					"path": "create/index",
+					"style": {
+						"navigationBarTitleText": "填写订单"
+					}
+				}
+			]
+		},
 		{
 			"root": "pagesMember",
 			"pages": [

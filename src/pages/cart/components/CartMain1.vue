@@ -12,6 +12,7 @@ import type { CartItem } from '@/types/cart'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 import { putMemberAddressByIdApI } from '@/services/address'
 import { computed } from 'vue'
+import { useGuessList } from '@/composables/index'
 //
 
 const memberStore = useMemberStore()
@@ -92,10 +93,12 @@ const gotoPatment = () => {
     title: '结算成功',
   })
 }
+
+const { guessRef, onScrolltolower } = useGuessList()
 </script>
 
 <template>
-  <scroll-view scroll-y class="scroll-view">
+  <scroll-view scroll-y class="scroll-view" @scrolltolower="onScrolltolower">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
