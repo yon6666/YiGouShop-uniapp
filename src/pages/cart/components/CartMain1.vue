@@ -89,9 +89,7 @@ const gotoPatment = () => {
     })
   }
   //tiaozhuan
-  uni.showToast({
-    title: '结算成功',
-  })
+  uni.navigateTo({ url: '/pagesOrder/create/index' })
 }
 
 const { guessRef, onScrolltolower } = useGuessList()

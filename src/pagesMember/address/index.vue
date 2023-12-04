@@ -3,6 +3,7 @@ import { getMemberAddressApI, deleteMemberAddressApI } from '@/services/address'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { AddressItem } from '@/types/address'
+import { useAddressStore } from '@/stores/modules/address'
 //获取收货地址列表
 const addressList = ref<AddressItem[]>([])
 const getAddressList = async () => {
@@ -23,6 +24,13 @@ const onDeleteAddress = (id: string) => {
 onShow(() => {
   getAddressList()
 })
+//修改收货地址
+const onChangeAddress = (item: AddressItem) => {
+  const addressStore = useAddressStore()
+  addressStore.changeSelectedAddress(item)
+  //返回上一页
+  uni.navigateBack()
+}
 </script>
 
 <template>
@@ -33,7 +41,7 @@ onShow(() => {
         <uni-swipe-action class="address-list">
           <!-- 收货地址项 -->
           <uni-swipe-action-item class="item" v-for="item in addressList" :key="item.id">
-            <view class="item-content">
+            <view class="item-content" @tap="onChangeAddress(item)">
               <view class="user">
                 {{ item.receiver }}
                 <text class="contact">{{ item.contact }}</text>
@@ -44,12 +52,15 @@ onShow(() => {
                 class="edit"
                 hover-class="none"
                 :url="`/pagesMember/address-form/index?id=${item.id}`"
+                @tap.stop="() => {}"
               >
                 修改
               </navigator>
             </view>
             <template #right>
-              <button @tap="$event => onDeleteAddress(item.id)" class="delete-button">删除</button>
+              <button @tap="($event) => onDeleteAddress(item.id)" class="delete-button">
+                删除
+              </button>
             </template>
           </uni-swipe-action-item>
         </uni-swipe-action>
