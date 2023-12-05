@@ -106,6 +106,12 @@
 			"root": "pagesOrder",
 			"pages": [
 				{
+					"path": "list/list",
+					"style": {
+						"navigationBarTitleText": "订单列表"
+					}
+				},
+				{
 					"path": "payment/payment",
 					"style": {
 						"navigationBarTitleText": "支付结果"
