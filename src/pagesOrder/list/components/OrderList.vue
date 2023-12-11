@@ -1,63 +1,101 @@
 <script setup lang="ts">
+import { OrderState, orderStateList } from '@/services/constansts'
+import { getMemberOrderAPI } from '@/services/order'
+import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
+import type { OrderItem, OrderListParams } from '@/types/order'
+import { ref } from 'vue'
+import { onMounted } from 'vue'
+
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 定义 porps
 const props = defineProps<{
   orderState: number
 }>()
+
+const queryParams: OrderListParams = {
+  page: 1,
+  pageSize: 5,
+  orderState: props.orderState,
+}
+const orderList = ref<OrderItem[]>([])
+//获取订单列表
+const getOrderListData = async () => {
+  const res = await getMemberOrderAPI(queryParams)
+  orderList.value = res.result.items
+}
+
+//支付订单
+const onOrderPay = async (id: string) => {
+  if (import.meta.env.DEV) {
+    // 开发环境：模拟支付，修改订单状态为已支付
+    await getPayMockAPI({ orderId: id })
+  } else {
+    const res = await getPayWxPayMiniPayAPI({ orderId: id })
+    wx.requestPayment(res.result)
+  }
+  //成功提示
+  uni.showToast({
+    icon: 'success',
+    title: '模拟支付成功',
+  })
+  const order = orderList.value.find((item) => item.id === id)
+  order!.orderState = OrderState.DaiFaHuo
+}
+onMounted(() => {
+  getOrderListData()
+})
 </script>
 <template>
   <scroll-view scroll-y class="orders">
-    {{ props }}
-    <view class="card" v-for="item in 2" :key="item">
+    <view class="card" v-for="item in orderList" :key="item.id">
       <!-- 订单信息 -->
       <view class="status">
-        <text class="date">2023-04-14 13:14:20</text>
+        <text class="date">{{ item.createTime }}</text>
         <!-- 订单状态文字 -->
-        <text>待付款</text>
+        <text>{{ orderStateList[item.orderState].text }}</text>
         <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
-        <text class="icon-delete"></text>
+        <text v-if="item.orderState >= OrderState.DaiPingJia" class="icon-delete"></text>
       </view>
       <!-- 商品信息，点击商品跳转到订单详情，不是商品详情 -->
       <navigator
-        v-for="sku in 2"
-        :key="sku"
+        v-for="sku in item.skus"
+        :key="sku.id"
         class="goods"
-        :url="`/pagesOrder/detail/detail?id=1`"
+        :url="`/pagesOrder/detail/index?id=${item.id}`"
         hover-class="none"
       >
         <view class="cover">
-          <image
-            mode="aspectFit"
-            src="https://yanxuan-item.nosdn.127.net/c07edde1047fa1bd0b795bed136c2bb2.jpg"
-          ></image>
+          <image mode="aspectFit" :src="sku.image"></image>
         </view>
         <view class="meta">
-          <view class="name ellipsis">ins风小碎花泡泡袖衬110-160cm</view>
-          <view class="type">藏青小花 130</view>
+          <view class="name ellipsis">{{ sku.name }}</view>
+          <view class="type">{{ sku.attrsText }}</view>
         </view>
       </navigator>
       <!-- 支付信息 -->
       <view class="payment">
-        <text class="quantity">共5件商品</text>
+        <text class="quantity">共{{ item.totalNum }}件商品</text>
         <text>实付</text>
-        <text class="amount"> <text class="symbol">¥</text>99</text>
+        <text class="amount"> <text class="symbol">¥</text>{{ item.payMoney }}</text>
       </view>
       <!-- 订单操作按钮 -->
       <view class="action">
         <!-- 待付款状态：显示去支付按钮 -->
-        <template v-if="true">
-          <view class="button primary">去支付</view>
+        <template v-if="item.orderState === OrderState.DaiFuKuan">
+          <view class="button primary" @tap="onOrderPay(item.id)">去支付</view>
         </template>
         <template v-else>
           <navigator
             class="button secondary"
-            :url="`/pagesOrder/create/create?orderId=id`"
+            :url="`/pagesOrder/create/index?orderId={{item.id}}`"
             hover-class="none"
           >
             再次购买
           </navigator>
           <!-- 待收货状态: 展示确认收货 -->
-          <view v-if="false" class="button primary">确认收货</view>
+          <view v-if="item.orderState === OrderState.DaiShouHuo" class="button primary"
+            >确认收货</view
+          >
         </template>
       </view>
     </view>

@@ -1,6 +1,6 @@
 //获取预付订单
 import { http } from '@/utils/http'
-import type { OrderCreateParams, OrderPreResult, OrderResult, OrderLogisticResult } from '@/types/order'
+import type { OrderCreateParams, OrderPreResult, OrderResult, OrderLogisticResult, OrderListParams, OrderListResult } from '@/types/order'
 
 export const getPrepayOrderAPI = () => {
   return http<OrderPreResult>({
@@ -81,6 +81,18 @@ export const getMemberOrderLogisticsByIdAPI = (id: string) => {
 export const deleteMemberOrderAPI = (data: { ids: string[] }) => {
   return http({
     method: 'DELETE',
+    url: `/member/order`,
+    data,
+  })
+}
+
+/**
+ * 获取订单列表
+ * @param data orderState 订单状态
+ */
+export const getMemberOrderAPI = (data: OrderListParams) => {
+  return http<OrderListResult>({
+    method: 'GET',
     url: `/member/order`,
     data,
   })
