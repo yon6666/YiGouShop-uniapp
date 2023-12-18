@@ -17,6 +17,8 @@ const getBannerData = async () => {
 const categoryList = ref<CategoryTopItem[]>([])
 const getCategoryTop = async () => {
   const res = await getCategoryTopAPI()
+  //await 的作用是等待 getCategoryTopAPI 函数执行完成并返回结果，
+  //然后将结果赋值给 res。这样可以确保在获取结果前不会执行下一行代码。
   categoryList.value = res.result
 }
 //tab交互
@@ -72,10 +74,7 @@ const subCategoryList = computed(() => {
               hover-class="none"
               :url="`/pages/goods/goods?id=${goods.id}`"
             >
-              <image
-                class="image"
-                :src=" goods.picture "
-              ></image>
+              <image class="image" :src="goods.picture"></image>
               <view class="name ellipsis">{{ goods.name }}</view>
               <view class="price">
                 <text class="symbol">¥</text>

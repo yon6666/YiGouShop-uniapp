@@ -1,6 +1,6 @@
 {
     "name" : "小兔鲜儿",
-    "appid" : "__UNI__BB09411",
+    "appid" : "wxa3cba5379c1c0291",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : 1,
@@ -91,7 +91,7 @@
         }
     },
     "mp-weixin" : {
-        "appid" : "wxaf150c5684a0544b",
+        "appid" : "wxa3cba5379c1c0291",
         "setting" : {
             "urlCheck" : false
         },

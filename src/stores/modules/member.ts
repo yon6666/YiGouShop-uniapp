@@ -27,7 +27,9 @@ export const useMemberStore = defineStore(
   },
   // TODO: 持久化
   {
+    // 配置持久化
     persist: {
+      // 调整为兼容多端的API，插件默认使用 `localStorage` 实现持久化，小程序端不兼容，需要替换持久化 API。
       storage: {
         getItem(key) {
           return uni.getStorageSync(key)

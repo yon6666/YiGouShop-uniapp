@@ -30,7 +30,7 @@ onShow(() => {
 const onDeleteCart = async (skuId: string) => {
   //弹窗确认
   uni.showModal({
-    content: '确定要删除该商品吗',
+    content: '确定要删除该商品吗111',
     success: async (res) => {
       if (res.confirm) {
         await deleteMemberCartAPI({ ids: [skuId] })

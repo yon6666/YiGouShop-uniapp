@@ -23,6 +23,7 @@ const goods = ref<GoodsResult>()
 const localdata = ref({} as SkuPopupLocaldata)
 const getGoodsByIdData = async () => {
   const res = await getGoodsByIdAPI(query.id)
+  console.log('11111')
   goods.value = res.result
   localdata.value = {
     _id: res.result.id,
