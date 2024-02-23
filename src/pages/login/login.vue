@@ -39,9 +39,9 @@ const loginSuccess = (profile: LoginResult) => {
 <template>
   <view class="viewport">
     <view class="logo">
-      <image
+      <!-- <image
         src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/logo_icon.png"
-      ></image>
+      ></image> -->
     </view>
     <view class="login">
       <!-- #ifdef H5 -->
@@ -67,7 +67,7 @@ const loginSuccess = (profile: LoginResult) => {
           </button>
         </view>
       </view>
-      <view class="tips">登录/注册即视为你同意《服务条款》和《小兔鲜儿隐私协议》</view>
+      <view class="tips">登录/注册即视为你同意《服务条款》和《易购隐私协议》</view>
     </view>
   </view>
 </template>

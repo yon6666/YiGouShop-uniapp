@@ -5,11 +5,10 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
 <template>
-  <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px'}">
+  <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <!-- logo文字 -->
     <view class="logo">
-      <image class="logo-image" src="@/static/images/logo.png"></image>
-      <text class="logo-text">新鲜 · 亲民 · 快捷</text>
+      <!-- <text class="logo-text">新鲜 · 亲民 · 快捷</text> -->
     </view>
     <!-- 搜索条 -->
     <view class="search">
@@ -51,7 +50,7 @@ export default {
       color: #fff;
       margin: 2rpx 0 0 20rpx;
       padding-left: 20rpx;
-      border-left: 1rpx solid #fff;
+      //border-left: 1rpx solid #fff;
       font-size: 26rpx;
     }
   }
@@ -79,4 +78,5 @@ export default {
     font-size: 30rpx;
     padding: 15rpx;
   }
-}</style>
+}
+</style>
