@@ -1,14 +1,12 @@
 ## 项目简介
 
-寻品商城项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
-
+易购商城项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
 
 ### 技术栈
 
 - 前端框架：[uni-app](https://uniapp.dcloud.net.cn/) (Vue3 + TS + Setup)
 - 状态管理：[pinia](https://pinia.vuejs.org/zh/)
 - 组件库：[uni-ui](https://uniapp.dcloud.net.cn/component/uniui/uni-ui.html)
-
 
 ## 运行程序
 
@@ -80,23 +78,30 @@ npm run dev:h5
 ```
 
 # 部分页面截取
+
 ## 首页
+
 ![](README_files/1.jpg)
 ![](README_files/2.jpg)
 
 ## 分类
+
 ![](README_files/3.jpg)
 
 ## 商品详情
+
 ![](README_files/4.jpg)
 ![](README_files/5.jpg)
 ![](README_files/6.jpg)
 
 ## 购物车
+
 ![](README_files/7.jpg)
 
 ## 结算
+
 ![](README_files/8.jpg)
 
 ## 个人中心
+
 ![](README_files/9.jpg)
